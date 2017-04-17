@@ -18,7 +18,7 @@ int main()
 	int score = 0;
 	int time = 1000;
 
-	int map[29][33] = {
+	int map[28][31] = {
 		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 		1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,
 		1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,
@@ -50,6 +50,7 @@ int main()
 		1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,
 		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		
 	};
 
 	bool key[4] = { false, false, false, false };
@@ -64,33 +65,44 @@ int main()
 
 	al_install_keyboard();
 
-	timer = al_create_timer(.02);
+	timer = al_create_timer(.04);
 
 	display = al_create_display(480, 640);
 
-	for (int x = 0; x < 29; x++) {
-		for (int y = 0; y < 33; y++) {
-			map[x][y] = map[x][y];
-		}
-		cout << endl;
-	}
+	pacman = al_create_bitmap(30, 30);
+	al_set_target_bitmap(pacman);
+	al_clear_to_color(al_map_rgb(255, 255, 0));
 
-	for (int x = 0; x < 29; x++) {
-		for (int y = 0; y < 33; y++) {
+
+	wall = al_create_bitmap(40, 40);
+	al_set_target_bitmap(wall);
+	al_clear_to_color(al_map_rgb(120, 0, 120));
+
+	pellet = al_create_bitmap(8, 8);
+	al_set_target_bitmap(pellet);
+	al_clear_to_color(al_map_rgb(255, 255, 255));
+
+	al_set_target_bitmap(al_get_backbuffer(display));
+
+	event_queue = al_create_event_queue();
+
+	al_register_event_source(event_queue, al_get_display_event_source(display));
+
+	al_register_event_source(event_queue, al_get_timer_event_source(timer));
+
+	al_register_event_source(event_queue, al_get_keyboard_event_source());
+
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+
+
+
+
+	for (int x = 0; x < 31; x++) {
+		for (int y = 0; y < 28; y++) {
 			cout << map[x][y];
 		}
 		cout << endl;
 	}
-
-	pacman = al_create_bitmap(32, 32);
-	al_set_target_bitmap(pacman);
-	al_clear_to_color(al_map_rgb(237, 200, 125));
-
-	al_set_target_bitmap(al_get_backbuffer(display));
-
-	al_clear_to_color(al_map_rgb(0, 0, 0));
-
-	al_flip_display();
 
 	al_start_timer(timer);
 
