@@ -76,9 +76,9 @@ int main()
 	//hook up fonts for on-screen text
 	al_init_font_addon();
 	al_init_ttf_addon();
-	/*ALLEGRO_FONT *font1 = al_load_ttf_font("barq.ttf", 100, 0);
+	ALLEGRO_FONT *font1 = al_load_ttf_font("barq.ttf", 100, 0);
 	ALLEGRO_FONT *font2 = al_load_ttf_font("barq.ttf", 30, 0);
-	ALLEGRO_FONT *font3 = al_load_ttf_font("Butcherman-Regular.ttf", 72, 0);*/
+	ALLEGRO_FONT *font3 = al_load_ttf_font("Butcherman-Regular.ttf", 72, 0);
 
 	//set up the two squares
 	bouncer = al_create_bitmap(BOUNCER_W, BOUNCER_H);
