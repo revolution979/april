@@ -8,6 +8,9 @@ using namespace std;
 #include "allegro5\allegro_acodec.h"
 #include "allegro5\allegro_primitives.h"
 
+enum MYKEYS {
+	KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
+};
 
 const int RIGHT = 3;
 const int LEFT = 1;
@@ -46,6 +49,9 @@ private:
 
 int main()
 {
+	//abort();
+
+	ALLEGRO_BITMAP *WalkForward; //you need one per direction
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
@@ -62,6 +68,19 @@ int main()
 	int score = 0;
 	int time = 1000;
 	int lives = 3;
+
+	int width = 640;
+	int height = 480;
+	int x = width / 2;
+	int y = height / 2;
+	//sprite variables////////////////////////////////////////////
+	const int maxFrame = 16;     //how many pictures in your bitmap
+	int curFrame = 0; //starting point
+	int frameCount = 0; //what number frame you're on
+	int frameDelay = 10; //speed up or slow down feet 
+	int frameWidth = 17;
+	int frameHeight = 20;
+	///////////////////////////////////////////////////////////////
 
 	int map[33][28] = {
 		2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
@@ -123,10 +142,15 @@ int main()
 
 	display = al_create_display(560, 660);
 
-	pacman = al_create_bitmap(16, 16);
+	//load sprite, set transparency////////////////////////////////////////////
+	pacman = al_load_bitmap("sprite.png");
+	al_convert_mask_to_alpha(pacman, al_map_rgb(255, 255, 255));
+	/////////////////////////////////////////////////////////////////////////
+
+	/*pacman = al_create_bitmap(16, 16);
 	al_set_target_bitmap(pacman);
 	al_clear_to_color(al_map_rgb(255, 255, 0));
-
+	*/
 
 	wall = al_create_bitmap(20, 20);
 	al_set_target_bitmap(wall);
@@ -225,6 +249,18 @@ int main()
 			//move the box left by 4 pixels
 			if (key[2] && wallCollide(pacman_x, pacman_y, LEFT, map) == 0) {
 				pacman_x -= 3.0;
+				//move sprite////////////////////////////////////////////////
+				if (++frameCount >= frameDelay)
+				{
+					if (++curFrame >= maxFrame) //if you've walked off the end, go back to the beginning
+						curFrame = 6;
+
+					frameCount = 0; //reset frame timer
+				}
+
+				if (x <= 0 - frameWidth)
+					x = width;
+				///////////////////////////////////////////////////////////////
 			}
 
 			/*if (key2[2] && pacman2_x >= 0) {
@@ -234,6 +270,18 @@ int main()
 			//move the box right by 4 pixels
 			if (key[3] && wallCollide(pacman_x, pacman_y, RIGHT, map) == 0) {
 				pacman_x +=  3.0;
+				//move sprite////////////////////////////////////////////////
+				if (++frameCount >= frameDelay)
+				{
+					if (++curFrame >= maxFrame) //if you've walked off the end, go back to the beginning
+						curFrame = 0;
+
+					frameCount = 0; //reset frame timer
+				}
+
+				if (x <= 0 - frameWidth)
+					x = width;
+				///////////////////////////////////////////////////////////////
 			}
 			/////warp zones
 			//left
@@ -416,7 +464,11 @@ int main()
 			//the algorithm above just changes the x and y coordinates
 			//here's where the bitmap is actually drawn somewhere else
 			//al_draw_bitmap(ball, ball_x, ball_y, 0);
-			al_draw_bitmap(pacman, pacman_x, pacman_y, 0);
+			//al_draw_bitmap(pacman, pacman_x, pacman_y, 0);
+
+			//////////////draw bitmap REGION///////////////////////////////////
+			al_draw_bitmap_region(pacman, curFrame * frameWidth, 0, frameWidth, frameHeight, pacman_x, pacman_y, 0);
+			//////////////////////////////////////////////////////////////////
 			
 			al_draw_textf(font2, al_map_rgb(255, 255, 255), 80, 0, ALLEGRO_ALIGN_CENTRE, "lives = %i", lives);
 			al_draw_textf(font2, al_map_rgb(255, 255, 255), 470, 0, ALLEGRO_ALIGN_CENTRE, "score = %i", score);
@@ -435,7 +487,7 @@ int main()
 		cout << endl;
 	}
 
-	al_start_timer(timer);
+	//al_start_timer(timer);
 
 }
 int wallCollide(int pacman_x, int pacman_y, int dir, int map[33][28]) {
