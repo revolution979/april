@@ -74,12 +74,13 @@ int main()
 	int x = width / 2;
 	int y = height / 2;
 	//sprite variables////////////////////////////////////////////
-	const int maxFrame = 16;     //how many pictures in your bitmap
+	const int maxFrame = 4;     //how many pictures in your bitmap
 	int curFrame = 0; //starting point
 	int frameCount = 0; //what number frame you're on
 	int frameDelay = 10; //speed up or slow down feet 
-	int frameWidth = 17;
-	int frameHeight = 20;
+	int frameWidth = 18;
+	int frameHeight = 18;
+	int dir = 0;
 	///////////////////////////////////////////////////////////////
 
 	int map[33][28] = {
@@ -143,7 +144,7 @@ int main()
 	display = al_create_display(560, 660);
 
 	//load sprite, set transparency////////////////////////////////////////////
-	pacman = al_load_bitmap("sprite.png");
+	pacman = al_load_bitmap("walk.png");
 	al_convert_mask_to_alpha(pacman, al_map_rgb(255, 255, 255));
 	/////////////////////////////////////////////////////////////////////////
 
@@ -210,6 +211,7 @@ int main()
 				al_flip_display();
 				al_draw_textf(font, al_map_rgb(255, 255, 255), 272, 302, ALLEGRO_ALIGN_CENTRE, "you lose");
 				al_flip_display();
+				cout << "your score was " << score << endl;
 				al_rest(5.0);
 				return 0;
 			}
@@ -249,6 +251,7 @@ int main()
 			//move the box left by 4 pixels
 			if (key[2] && wallCollide(pacman_x, pacman_y, LEFT, map) == 0) {
 				pacman_x -= 3.0;
+				dir = LEFT;
 				//move sprite////////////////////////////////////////////////
 				if (++frameCount >= frameDelay)
 				{
@@ -270,6 +273,7 @@ int main()
 			//move the box right by 4 pixels
 			if (key[3] && wallCollide(pacman_x, pacman_y, RIGHT, map) == 0) {
 				pacman_x +=  3.0;
+				dir = RIGHT;
 				//move sprite////////////////////////////////////////////////
 				if (++frameCount >= frameDelay)
 				{
@@ -467,7 +471,10 @@ int main()
 			//al_draw_bitmap(pacman, pacman_x, pacman_y, 0);
 
 			//////////////draw bitmap REGION///////////////////////////////////
+			if(dir == RIGHT)
 			al_draw_bitmap_region(pacman, curFrame * frameWidth, 0, frameWidth, frameHeight, pacman_x, pacman_y, 0);
+			else
+				al_draw_bitmap_region(pacman, curFrame * frameWidth, 0, frameWidth, frameHeight, pacman_x, pacman_y, 1);
 			//////////////////////////////////////////////////////////////////
 			
 			al_draw_textf(font2, al_map_rgb(255, 255, 255), 80, 0, ALLEGRO_ALIGN_CENTRE, "lives = %i", lives);
